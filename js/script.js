@@ -1,7 +1,11 @@
 const input = document.querySelector('input');
 const ctx = document.querySelector('canvas').getContext('2d');
+
+const divRunTime = document.querySelector('#run-time');
+const divMinPressure = document.querySelector('#min-pressure');
+const ulSequence = document.querySelector('#info-sequence');
+
 let chart;
-console.log('ctx:', ctx);
 
 input.addEventListener('change', handleFileInput);
 
@@ -18,8 +22,36 @@ function handleFileInput(event) {
 function showGraph(event) {
   const { result } = event.target;
   const rows = parseData(result);
-  // console.log('rows:', rows);
-  // console.log('dataset data:', rows.map(r => parseInt(r['Pressure'])));
+
+  // min pressure
+  let minPressure = Infinity;
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    minPressure = Math.min(minPressure, row['Pressure']);
+  }
+  divMinPressure.innerText = `${minPressure} mTorr`;
+
+  // run time
+  const runTime = rows.length - 1;
+  if (runTime >= 60) {
+    const hours = (runTime / 60).toFixed(1);
+    divRunTime.innerText = `${hours} hours`
+  }
+  else {
+    divRunTime.innerText = `${runTime} min`;
+  }
+
+  // info sequence
+  const dupSequence = [];
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const info = row['SN=11527'];
+    const stage =
+    minPressure = Math.min(minPressure, row['Pressure']);
+  }
+
+  const GRAPH_MAX = 2500;
+  const GRAPH_MIN = 100;
 
   const config = {
     type: 'line',
@@ -27,20 +59,25 @@ function showGraph(event) {
       labels: rows.map((r, i) => `T ${i}`),
       datasets: [{
         label: 'Pressure (mTorr)',
-        data: rows.map(r => Math.min(2500, parseInt(r['Pressure']))),
+        data: rows.map(r => Math.min(GRAPH_MAX, parseInt(r['Pressure']))),
         fill: false,
         borderColor: 'rgb(75, 192, 192)',
+        pointRadius: 1,
+        pointHitRadius: 5,
         tension: 0.1
       }, {
+        label: '500 mTorr',
         data: rows.map(r => 500),
         pointRadius: 0,
+        pointHitRadius: 0,
+        borderWidth: 5,
       }],
     },
     options: {
       scales: {
         y: {
-          min: 100,
-          max: 2500,
+          min: GRAPH_MIN,
+          max: GRAPH_MAX,
         }
       }
     },
