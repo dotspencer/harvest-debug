@@ -1,0 +1,6 @@
+* { box-sizing: border-box; }
+
+canvas {
+  margin-top: 15px;
+  max-height: 400px;
+}
