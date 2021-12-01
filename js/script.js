@@ -42,13 +42,38 @@ function showGraph(event) {
   }
 
   // info sequence
+  ulSequence.innerHTML = '';
   const dupSequence = [];
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     const info = row['SN=11527'];
-    const stage =
-    minPressure = Math.min(minPressure, row['Pressure']);
+    const stage = row['Stage'];
+    if (info) dupSequence.push({ info: true, val: info });
+    if (stage) dupSequence.push({ val: stage });
   }
+  const sequence = [];
+  for (let i = 0; i < dupSequence.length; i++) {
+    const curr = dupSequence[i];
+    const prev = dupSequence[i - 1] || {};
+    if (curr.val !== prev.val) {
+      sequence.push(curr);
+    }
+  }
+  const errorTags = ['Fail', 'Expire', 'Unable'];
+  sequence.forEach(s => {
+    const li = document.createElement('li');
+    const span = document.createElement('span');
+    span.innerText = s.val;
+    if (s.info) {
+      li.classList.add('info');
+    }
+    if (errorTags.find(tag => s.val.includes(tag))) {
+      li.classList.add('error');
+    }
+    li.appendChild(span);
+    ulSequence.appendChild(li);
+  });
+
 
   const GRAPH_MAX = 2500;
   const GRAPH_MIN = 100;

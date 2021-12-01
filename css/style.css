@@ -16,6 +16,24 @@ canvas {
 .stat .name, .stat .value {
   display: inline-block;
 }
-.stat .name {
+.stat .name, .list-wrap .name {
   font-weight: bold;
+}
+.list-wrap {
+  margin-top: 10px;
+}
+ul {
+  margin: 0;
+  padding-left: 10px;
+}
+li {
+  margin-left: 10px;
+  margin-top: 5px;
+}
+li.error span {
+  background-color: indianred;
+  padding: 3px 6px;
+  color: white;
+  display: inline-block;
+  border-radius: 4px;
 }
