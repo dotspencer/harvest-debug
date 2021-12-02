@@ -81,7 +81,7 @@ function showGraph(event) {
   const config = {
     type: 'line',
     data: {
-      labels: rows.map((r, i) => `T ${i}`),
+      labels: rows.map((r, i) => `${i}m`),
       datasets: [{
         label: 'Pressure (mTorr)',
         data: rows.map(r => Math.min(GRAPH_MAX, parseInt(r['Pressure']))),
@@ -103,6 +103,10 @@ function showGraph(event) {
         y: {
           min: GRAPH_MIN,
           max: GRAPH_MAX,
+          ticks: {
+          // forces step size to be 50 units
+          stepSize: 100
+        }
         }
       }
     },

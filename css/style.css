@@ -1,15 +1,15 @@
 * { box-sizing: border-box; }
-
 body {
   font-family: system-ui, sans-serif;
 }
-
+input {
+  width: 100%;
+}
 canvas {
   margin-top: 15px;
   max-height: 400px;
   max-width: 1000px;
 }
-
 .stat {
   margin-top: 10px;
 }
