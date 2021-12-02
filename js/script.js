@@ -10,10 +10,15 @@ let chart;
 input.addEventListener('change', handleFileInput);
 
 function handleFileInput(event) {
+  const file = input.files[0];
+  // ingore if file not selected
+  if (!file) {
+    return;
+  }
+  // only clear if a chart exists
   if (chart) {
     chart.destroy();
   }
-  const file = input.files[0];
   const reader = new FileReader();
   reader.addEventListener('load', showGraph);
   reader.readAsText(file);
