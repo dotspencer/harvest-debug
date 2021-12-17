@@ -2,8 +2,19 @@
 body {
   font-family: system-ui, sans-serif;
 }
+.file {
+  display: flex;
+  margin-top: 10px;
+}
+label {
+  flex-shrink: 0;
+  min-width: 60px;
+  border: 3px solid;
+  padding: 0 4px;
+}
 input {
   width: 100%;
+  margin-left: 5px;
 }
 canvas {
   margin-top: 15px;

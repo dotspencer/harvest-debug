@@ -1,16 +1,32 @@
-const input = document.querySelector('input');
+const inputOne = document.querySelector('#file-0');
+const inputTwo = document.querySelector('#file-1');
+const labelOne = document.querySelectorAll('label')[0];
+const labelTwo = document.querySelectorAll('label')[1];
 const ctx = document.querySelector('canvas').getContext('2d');
 
 const divRunTime = document.querySelector('#run-time');
 const divMinPressure = document.querySelector('#min-pressure');
 const ulSequence = document.querySelector('#info-sequence');
 
+const graphData = [];
 let chart;
 
-input.addEventListener('change', handleFileInput);
+inputOne.addEventListener('change', (event) => handleFileInput(event, 0));
+inputTwo.addEventListener('change', (event) => handleFileInput(event, 1));
 
-function handleFileInput(event) {
-  const file = input.files[0];
+const COLORS = [
+  'dodgerblue',
+  'mediumseagreen',
+];
+const style = document.createElement('style');
+style.innerHTML = `
+  label[for="file-0"] { border-color: ${COLORS[0]}; }
+  label[for="file-1"] { border-color: ${COLORS[1]}; }
+`;
+document.head.appendChild(style);
+
+function handleFileInput({ target }, fileIndex) {
+  const file = target.files[0];
   // ingore if file not selected
   if (!file) {
     return;
@@ -19,12 +35,13 @@ function handleFileInput(event) {
   if (chart) {
     chart.destroy();
   }
+
   const reader = new FileReader();
-  reader.addEventListener('load', showGraph);
+  reader.addEventListener('load', (event) => showGraph(event, fileIndex));
   reader.readAsText(file);
 }
 
-function showGraph(event) {
+function showGraph(event, fileIndex) {
   const { result } = event.target;
   const rows = parseData(result);
 
@@ -83,25 +100,40 @@ function showGraph(event) {
   const GRAPH_MAX = 2500;
   const GRAPH_MIN = 100;
 
+  const data = {
+    label: 'Pressure (mTorr)',
+    data: rows.map(r => Math.min(GRAPH_MAX, parseInt(r['Pressure']))),
+    fill: false,
+    borderColor: COLORS[fileIndex],
+    pointRadius: 1,
+    pointHitRadius: 5,
+    tension: 0.1
+  };
+  graphData[fileIndex] = data;
+
+  let longest = graphData[0];
+  if (!longest || graphData[1]?.data?.length > longest.data.length) {
+    longest = graphData[1];
+  }
+
+  const datasets = [
+    graphData[0],
+    graphData[1],
+    {
+      label: '500 mTorr',
+      data: longest.data.map(r => 500),
+      pointRadius: 0,
+      pointHitRadius: 0,
+      borderWidth: 5,
+    }
+  ].filter(d => d);
+  console.log('datasets:', Math.random(), datasets);
+
   const config = {
     type: 'line',
     data: {
-      labels: rows.map((r, i) => `${i}m`),
-      datasets: [{
-        label: 'Pressure (mTorr)',
-        data: rows.map(r => Math.min(GRAPH_MAX, parseInt(r['Pressure']))),
-        fill: false,
-        borderColor: 'rgb(75, 192, 192)',
-        pointRadius: 1,
-        pointHitRadius: 5,
-        tension: 0.1
-      }, {
-        label: '500 mTorr',
-        data: rows.map(r => 500),
-        pointRadius: 0,
-        pointHitRadius: 0,
-        borderWidth: 5,
-      }],
+      labels: longest.data.map((r, i) => `${i}m`),
+      datasets,
     },
     options: {
       scales: {
