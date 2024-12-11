@@ -49,7 +49,7 @@ function showGraph(event, fileIndex) {
   let minPressure = Infinity;
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
-    minPressure = Math.min(minPressure, row['Pressure']);
+    minPressure = Math.min(minPressure, row['Pressure'] || row['mTorr']);
   }
   divMinPressure.innerText = `${minPressure} mTorr`;
 
@@ -102,7 +102,7 @@ function showGraph(event, fileIndex) {
 
   const data = {
     label: 'Pressure (mTorr)',
-    data: rows.map(r => Math.min(GRAPH_MAX, parseInt(r['Pressure']))),
+    data: rows.map(r => Math.min(GRAPH_MAX, parseInt(r['Pressure'] || r['mTorr']))),
     fill: false,
     borderColor: COLORS[fileIndex],
     pointRadius: 1,
